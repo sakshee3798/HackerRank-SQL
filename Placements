@@ -1,0 +1,15 @@
+With sp as (
+select s.ID, s.name, p.salary
+from students s
+inner join packages  p on s.ID = p.ID
+),
+
+fp as (
+select f.friend_ID, p.salary, f.ID
+from friends f
+inner join packages p on f.friend_ID = p.ID
+)
+
+select sp.name
+from sp
+inner join fp on sp.ID = fp.ID where fp.salary > sp.salary Order by fp.salary asc;
