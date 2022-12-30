@@ -1,0 +1,15 @@
+with temp as (
+select *, 
+row_number() over (order by x) as rn
+from Functions
+)
+
+select
+distinct T1.X, T1.Y
+
+from temp T1 join temp T2
+on T1.X = T2.Y
+and T1.Y = T2.X
+and T1.rn <> T2.rn
+and T1.X <= T1.Y
+order by T1.X;
