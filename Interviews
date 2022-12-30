@@ -1,0 +1,15 @@
+select by_contest_id.contest_id, con.hacker_id, con.name, ts, tas, tv, tuv from( select contest_id, sum(ts) as ts, sum(tas) as tas, sum(tv) as tv, sum(tuv) as tuv 
+from
+  (select college_id, sum(total_s) as ts, sum(total_as) as tas, sum(total_v) as tv, sum(total_uv) as tuv 
+    from Challenges cha 
+    left join ( select challenge_id, sum(total_views) as total_v, sum(total_unique_views) as total_uv 
+      from View_Stats 
+      group by challenge_id) v on cha.challenge_id = v.challenge_id 
+    left join ( select challenge_id, sum(total_submissions) as total_s, sum(total_accepted_submissions) as total_as 
+      from Submission_Stats 
+      group by challenge_id) s on cha.challenge_id = s.challenge_id 
+      group by cha.college_id) by_college 
+      left join Colleges col on col.college_id = by_college.college_id 
+      group by contest_id having sum(ts)> 0 or sum(tas) > 0 or sum(tv) > 0 or sum(tuv) > 0) by_contest_id 
+      left join Contests con on by_contest_id.contest_id = con.contest_id 
+      order by by_contest_id.contest_id;
