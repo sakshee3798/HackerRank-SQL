@@ -1,0 +1,24 @@
+delimiter $$
+create procedure primenumbers(in input int)
+begin
+    declare n int unsigned default 1;
+    declare p int unsigned default 1;
+    declare total int unsigned default 0;
+    declare prime text default '';
+    while n<=input do
+        while p<=n do
+            if n % p =0 then set total=total+1;     
+            end if;
+            set p=p+1;
+        end while;
+        if total=2 then set prime =concat(prime,n,'&');
+        end if;
+        set total=0;
+        set n=n+1;
+        set p=1;
+    end while;
+    select left(prime,length(prime)-1);
+end $$
+delimiter ;
+
+call primenumbers(1000);
