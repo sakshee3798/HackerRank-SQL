@@ -1,0 +1,10 @@
+select b.n, 
+Case when b.p is not null then 
+     Case when (Select Count(*) from bst where p = b.n) = 0 then 'Leaf'
+     else 'Inner'
+     end
+    else 'Root'
+end
+
+from BST b 
+order by b.n;
