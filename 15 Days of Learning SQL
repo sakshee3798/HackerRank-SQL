@@ -1,0 +1,26 @@
+SELECT
+    submission_date, COUNT(DISTINCT hacker_id),
+    (SELECT hacker_id
+    FROM Submissions
+    WHERE submission_date = o.submission_date
+    GROUP BY hacker_id
+    ORDER BY COUNT(DISTINCT submission_id) DESC, hacker_id ASC
+    LIMIT 1) AS most_active,
+    
+    (SELECT name
+    FROM Hackers
+    WHERE hacker_id = most_active)
+    FROM Submissions o
+    WHERE hacker_id IN 
+               (SELECT i.hacker_id
+               FROM Submissions i
+               -- FOR each query this WHERE clause is restricting the input set up to date queried in the upmost row
+               WHERE i.submission_date <=
+                    (SELECT MIN(submission_date) FROM Submissions)
+                    + INTERVAL DATEDIFF(o.submission_date, (SELECT MIN(submission_date) FROM Submissions)) DAY
+                    -- A way to tell hacker have been consistently posting
+                GROUP BY i.hacker_id
+                HAVING COUNT(DISTINCT submission_date) = DATEDIFF(o.submission_date, (SELECT MIN(submission_date) FROM Submissions)) + 1
+                )
+GROUP BY submission_date
+ORDER BY submission_date;
