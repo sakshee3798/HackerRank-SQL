@@ -1,0 +1,19 @@
+WITH unique_s AS (
+    SELECT start_date, ROW_NUMBER() OVER (ORDER BY start_date) AS n
+    FROM projects
+    WHERE start_date NOT IN (SELECT end_date FROM projects)
+)
+, unique_e AS (
+    SELECT end_date, ROW_NUMBER() OVER (ORDER BY end_date) AS n
+    FROM projects
+    WHERE end_date NOT IN (SELECT start_date FROM projects)
+)
+
+SELECT start_date, end_date
+FROM unique_s
+LEFT JOIN (
+    SELECT *
+    FROM unique_e
+) j
+USING (n)
+ORDER BY DATEDIFF(end_date, start_date)
