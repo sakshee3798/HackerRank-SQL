@@ -1,0 +1,11 @@
+WITH cte AS (
+    SELECT *,
+        ROW_NUMBER() OVER (ORDER BY lat_n) AS r,
+        COUNT(*) OVER () AS c
+    FROM station 
+)
+SELECT ROUND(AVG(lat_n),4)
+FROM cte
+WHERE
+    (MOD(c, 2) = 0 AND r IN (FLOOR(c/2), FLOOR(c/2) + 1)) OR
+    (MOD(c, 2) = 1 AND r = FLOOR(c/2) + 1);
