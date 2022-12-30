@@ -1,0 +1,7 @@
+With CTE AS 
+(Select c.hacker_id as id, h.name as name, count(c.hacker_id) as counter 
+from challenges c Inner Join Hackers h On c.hacker_id = h.hacker_id Group by c.hacker_id, h.name )
+Select id, name, counter 
+from CTE 
+where Counter = (Select max(counter) from CTE) OR counter IN (select counter from cte Group by counter Having count(Counter) = 1) 
+Order by Counter DESC, id;
