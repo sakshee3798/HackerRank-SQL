@@ -1,0 +1,8 @@
+with recursive triangle as(
+    select 1 as counts,cast("*" as char(50))as star
+    union all
+    select counts + 1, concat(star," *")
+    from triangle
+    where counts < 20)
+select star
+from triangle;
